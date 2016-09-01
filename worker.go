@@ -192,6 +192,7 @@ func NewWorkerPool(c *Client, wm WorkMap, count int) *WorkerPool {
 
 // Start starts all of the Workers in the WorkerPool.
 func (w *WorkerPool) Start() {
+	fmt.Println("starting worker pool")
 	w.mu.Lock()
 	defer w.mu.Unlock()
 

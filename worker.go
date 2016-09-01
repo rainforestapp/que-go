@@ -44,6 +44,7 @@ func init() {
 	if v := os.Getenv("QUE_WAKE_INTERVAL"); v != "" {
 		if newInt, err := strconv.Atoi(v); err == nil {
 			defaultWakeInterval = time.Duration(newInt) * time.Second
+			fmt.Printf("setting defaultWakeInterval to %d", newInt)
 		}
 	}
 }
@@ -76,9 +77,13 @@ func (w *Worker) Work() {
 			log.Println("worker done")
 			return
 		case <-time.After(w.Interval):
+			fmt.Println("waking up")
 			for {
 				if didWork := w.WorkOne(); !didWork {
+					fmt.Println("back to sleep")
 					break // didn't do any work, go back to sleep
+				} else {
+					fmt.Println("doing stuff?")
 				}
 			}
 		}
@@ -86,14 +91,17 @@ func (w *Worker) Work() {
 }
 
 func (w *Worker) WorkOne() (didWork bool) {
+	fmt.Println("working one")
 	j, err := w.c.LockJob(w.Queue)
 	if err != nil {
 		log.Printf("attempting to lock job: %v", err)
 		return
 	}
 	if j == nil {
+		fmt.Println("nothing to do")
 		return // no job was available
 	}
+	fmt.Println("actually working one")
 	defer j.Done()
 	defer recoverPanic(j)
 

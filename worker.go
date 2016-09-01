@@ -101,13 +101,15 @@ func (w *Worker) WorkOne() (didWork bool) {
 		fmt.Println("nothing to do")
 		return // no job was available
 	}
-	fmt.Println("actually working one")
+	fmt.Printf("actually working one %s", j.Type)
 	defer j.Done()
 	defer recoverPanic(j)
 
 	didWork = true
 
+	fmt.Println("Starting to work")
 	wf, ok := w.m[j.Type]
+	fmt.Println("Done working, finishing")
 	if !ok {
 		msg := fmt.Sprintf("unknown job type: %q", j.Type)
 		log.Println(msg)

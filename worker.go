@@ -101,15 +101,13 @@ func (w *Worker) WorkOne() (didWork bool) {
 		fmt.Println("nothing to do")
 		return // no job was available
 	}
-	fmt.Printf("actually working one %s", j.Type)
+	fmt.Printf("actually working one %s\n", j.Type)
 	defer j.Done()
 	defer recoverPanic(j)
 
 	didWork = true
 
-	fmt.Println("Starting to work")
 	wf, ok := w.m[j.Type]
-	fmt.Println("Done working, finishing")
 	if !ok {
 		msg := fmt.Sprintf("unknown job type: %q", j.Type)
 		log.Println(msg)
@@ -119,10 +117,13 @@ func (w *Worker) WorkOne() (didWork bool) {
 		return
 	}
 
+	fmt.Println("Starting to work")
 	if err = wf(j); err != nil {
+		fmt.Println("error")
 		j.Error(err.Error())
 		return
 	}
+	fmt.Println("Done working, finishing")
 
 	if err = j.Delete(); err != nil {
 		log.Printf("attempting to delete job %d: %v", j.ID, err)

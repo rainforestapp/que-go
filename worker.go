@@ -182,6 +182,7 @@ type WorkerPool struct {
 
 // NewWorkerPool creates a new WorkerPool with count workers using the Client c.
 func NewWorkerPool(c *Client, wm WorkMap, count int) *WorkerPool {
+	fmt.Printf("Creating worker pool with %d workers in %d defaultWakeInterval\n", count, defaultWakeInterval)
 	return &WorkerPool{
 		c:        c,
 		WorkMap:  wm,
@@ -197,6 +198,7 @@ func (w *WorkerPool) Start() {
 	defer w.mu.Unlock()
 
 	for i := range w.workers {
+		fmt.Printf("creating worker #%d\n", i)
 		w.workers[i] = NewWorker(w.c, w.WorkMap)
 		w.workers[i].Interval = w.Interval
 		w.workers[i].Queue = w.Queue
